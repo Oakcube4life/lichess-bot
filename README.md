@@ -41,6 +41,23 @@ Can run on:
 - Windows, Linux and MacOS
 - Docker
 
+## Building and Running Tests
+
+Requires Python 3.11 or newer.
+
+```bash
+git clone https://github.com/Oakcube4life/lichess-bot.git
+cd lichess-bot
+python3 -m venv .venv
+source .venv/bin/activate          
+# Windows: .venv\Scripts\activate
+pip install -r requirements.txt -r test_bot/test-requirements.txt
+pytest
+```
+
+Some tests are skipped unless a Lichess API token is set
+(`LICHESS_BOT_TEST_TOKEN`). one test is marked as an expected failure.
+
 ## Steps
 1. [Install lichess-bot](https://github.com/lichess-bot-devs/lichess-bot/wiki/How-to-Install)
 2. [Create a lichess OAuth token](https://github.com/lichess-bot-devs/lichess-bot/wiki/How-to-create-a-Lichess-OAuth-token)
