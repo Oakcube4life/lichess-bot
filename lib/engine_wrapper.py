@@ -836,14 +836,21 @@ def get_online_move(li: lichess.Lichess, board: chess.Board, game: model.Game, o
     return chess.engine.PlayResult(None, None)
 
 
-def get_chessdb_move(li: lichess.Lichess, board: chess.Board, game: model.Game,
-                     chessdb_cfg: Configuration) -> tuple[str | None, chess.engine.InfoDict]:
-    """Get a move from chessdb.cn's opening book."""
-    use_chessdb = chessdb_cfg.enabled
+def check_chessdb_book_unavailable(board: chess.Board, game: model.Game, chessdb_cfg: Configuration) -> bool:
+    """Return True if chessdb's opening book should not be used for this move."""
     time_left = msec(game.state[wbtime(board)])
     min_time = seconds(chessdb_cfg.min_time)
     max_time = seconds(chessdb_cfg.max_time)
-    if not use_chessdb or time_left < min_time or game.clock_initial > max_time or board.uci_variant != "chess":
+    return (not chessdb_cfg.enabled
+            or time_left < min_time
+            or game.clock_initial > max_time
+            or board.uci_variant != "chess")
+
+
+def get_chessdb_move(li: lichess.Lichess, board: chess.Board, game: model.Game,
+                     chessdb_cfg: Configuration) -> tuple[str | None, chess.engine.InfoDict]:
+    """Get a move from chessdb.cn's opening book."""
+    if check_chessdb_book_unavailable(board, game, chessdb_cfg):
         return None, {}
 
     move = None
