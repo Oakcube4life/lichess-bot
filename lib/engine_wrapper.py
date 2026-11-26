@@ -738,6 +738,13 @@ def check_for_draw_offer(game: model.Game) -> bool:
     return bool(game.state.get(f"{game.opponent_color[0]}draw"))
 
 
+def get_book_variant(board: chess.Board) -> str:
+    """Get the variant name used to look up opening books for this board."""
+    if board.chess960:
+        return "chess960"
+    return "standard" if board.uci_variant == "chess" else str(board.uci_variant)
+
+
 def get_book_move(board: chess.Board, game: model.Game,
                   polyglot_cfg: Configuration) -> chess.engine.PlayResult:
     """Get a move from an opening book."""
@@ -747,10 +754,7 @@ def get_book_move(board: chess.Board, game: model.Game,
     if not use_book or len(board.move_stack) > max_game_length:
         return no_book_move
 
-    if board.chess960:
-        variant = "chess960"
-    else:
-        variant = "standard" if board.uci_variant == "chess" else str(board.uci_variant)
+    variant = get_book_variant(board)
 
     change_value_to_list(polyglot_cfg.config, "book", key=variant)
     books = polyglot_cfg.book.lookup(variant)
