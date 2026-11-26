@@ -411,15 +411,20 @@ def game_category(variant: str, base_time: int, increment: int, num_days: int) -
     :param num_days: If the game is correspondence, we have some days to play the move.
     :return: The game category.
     """
-    game_duration = base_time + increment * 40
+    estimated_moves_per_game = 40
+    bullet_max_seconds = 179
+    blitz_max_seconds = 479
+    rapid_max_seconds = 1499
+
+    game_duration = base_time + increment * estimated_moves_per_game
     if variant != "standard":
         return variant
     if num_days:
         return "correspondence"
-    if game_duration < 179:
+    if game_duration < bullet_max_seconds:
         return "bullet"
-    if game_duration < 479:
+    if game_duration < blitz_max_seconds:
         return "blitz"
-    if game_duration < 1499:
+    if game_duration < rapid_max_seconds:
         return "rapid"
     return "classical"
